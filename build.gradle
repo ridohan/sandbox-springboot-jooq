@@ -10,9 +10,14 @@ buildscript {
 	}
 }
 
+plugins {
+	id 'nu.studer.jooq' version '2.0.7'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+
 
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -23,10 +28,49 @@ repositories {
 
 
 dependencies {
+	jooqRuntime 'mysql:mysql-connector-java'
+
 	compile('org.springframework.boot:spring-boot-starter-jooq')
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
+}
+
+jooq {
+
+	sample(sourceSets.main) {
+		jdbc {
+			driver = 'com.mysql.jdbc.Driver'
+			url = 'jdbc:mysql://localhost:3306/sandbox'
+			user = 'root'
+			password = 'root'
+
+		}
+		generator {
+			name = 'org.jooq.util.DefaultGenerator'
+			strategy {
+				name = 'org.jooq.util.DefaultGeneratorStrategy'
+				// ...
+			}
+			database {
+				name = 'org.jooq.util.mysql.MySQLDatabase'
+				//inputSchema = 'public'
+
+			}
+			generate {
+				relations = true
+				deprecated = false
+				records = true
+				immutablePojos = true
+				fluentSetters = true
+				// ...
+			}
+			target {
+				packageName = 'com.ridohan.sandbox.jooq'
+				//directory = './src/main/java'
+			}
+		}
+	}
 }
